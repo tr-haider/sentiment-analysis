@@ -30,7 +30,7 @@ def perform_ner(text):
 
 # Function to perform sentiment analysis
 def perform_sentiment_analysis(text):
-    sentiment_classifier = pipeline(task="sentiment-analysis")
+    sentiment_classifier = pipeline(task="sentiment-analysis",model="distilbert-base-uncased-finetuned-sst-2-english")
     preds = sentiment_classifier(text)
     preds = [{"score": round(pred["score"], 4) * 100, "label": pred["label"]} for pred in preds]
     return preds
