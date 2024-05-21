@@ -1,13 +1,16 @@
 import streamlit as st
 from transformers import pipeline
 import nltk
+import os
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import en_core_web_sm
+# Specify the NLTK data directory
+nltk_data_dir = os.path.join(os.path.dirname(__file__), 'nltk_data')
+nltk.data.path.append(nltk_data_dir)
+
+# Load spaCy model
 nlp = en_core_web_sm.load()
-# Download NLTK resources if not already downloaded
-nltk.download('stopwords')
-nltk.download('punkt')
 
 # Function to extract stop words
 def extract_stop_words(text):
@@ -29,10 +32,10 @@ def perform_ner(text):
 def perform_sentiment_analysis(text):
     sentiment_classifier = pipeline(task="sentiment-analysis")
     preds = sentiment_classifier(text)
-    preds = [{"score": round(pred["score"], 4), "label": pred["label"]} for pred in preds]
+    preds = [{"score": round(pred["score"], 4) * 100, "label": pred["label"]} for pred in preds]
     return preds
 def sentiment_run():
-    st.title("Text Analysis Tool")
+    st.title("Sentiment Analysis & NER Tool")
 
     # Input text area
     text = st.text_area("Enter text:")
