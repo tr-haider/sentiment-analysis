@@ -51,3 +51,4 @@ def sentiment_run():
       st.subheader("Sentiment Analysis")
       sentiment_results = perform_sentiment_analysis(text)
       st.write(sentiment_results)
+sentiment_run()
