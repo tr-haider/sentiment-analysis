@@ -1,5 +1,5 @@
 import streamlit as st
-from transformers import pipeline
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 import os
 from nltk.corpus import stopwords
@@ -12,6 +12,8 @@ nltk.data.path.append(nltk_data_dir)
 # Load spaCy model
 nlp = en_core_web_sm.load()
 
+# Initialize VADER sentiment analyzer
+sid = SentimentIntensityAnalyzer()
 # Function to extract stop words
 def extract_stop_words(text):
     english_stopwords = set(stopwords.words('english'))
@@ -30,10 +32,14 @@ def perform_ner(text):
 
 # Function to perform sentiment analysis
 def perform_sentiment_analysis(text):
-    sentiment_classifier = pipeline("sentiment-analysis")
-    preds = sentiment_classifier(text)
-    preds = [{"score": round(pred["score"], 4) * 100, "label": pred["label"]} for pred in preds]
-    return preds
+    scores = sid.polarity_scores(text)
+    total = scores['pos'] + scores['neg'] + scores['neu']
+    proportions = {
+        'positive': round((scores['pos'] / total) * 100, 2),
+        'negative': round((scores['neg'] / total) * 100, 2),
+        'neutral': round((scores['neu'] / total) * 100, 2)
+    }
+    return proportions
 def sentiment_run():
     st.title("Sentiment Analysis & NER Tool")
 
